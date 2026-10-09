@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A simple model of an auction.
@@ -80,31 +81,75 @@ public class Auction
      */
     public Lot getLot(int lotNumber)
     {
+        // Answer to Question 6
+        Lot selectedLot = null;
         if((lotNumber >= 1) && (lotNumber < nextLotNumber)) {
-            // The number seems to be reasonable.
-            Lot selectedLot = listOfLots.get(lotNumber - 1);
-            // Include a confidence check to be sure we have the
-            // right lot.
-            if(selectedLot.getNumber() != lotNumber) {
-                System.out.println("Internal error: Lot number " +
-                                   selectedLot.getNumber() +
-                                   " was returned instead of " +
-                                   lotNumber);
-                // Don't return an invalid lot.
-                selectedLot = null;
+            for (Lot lot : listOfLots) {
+                if (lot.getNumber() == lotNumber) {
+                    selectedLot = lot;
+                }
             }
-            return selectedLot;
+        } else {
+            System.out.println("Lot number: " + lotNumber + " does not exist.");
         }
-        else {
-            System.out.println("Lot number: " + lotNumber +
-                               " does not exist.");
-            return null;
+        return selectedLot;
+    }
+        
+    /**
+     * Answer to Question 3
+     */
+    public void close() {
+        for (Lot lot : listOfLots) {
+            Bid highestBid = lot.getHighestBid();
+            if (highestBid != null) {
+                System.out.println(lot + "   Bidder: " + highestBid.getBidder().getName());
+            }  else {
+                System.out.println(lot);
+            }
         }
     }
     
-    //public void close() {
-        //for (Lot lots : listOfLots) {
-            
-        //}
+    /**
+     * Answer to Question 4
+     */
+    public ArrayList<Lot> getUnsold() {
+        ArrayList<Lot> unsoldLots = new ArrayList<>();
+        Iterator<Lot> it = listOfLots.iterator();
+        while (it.hasNext()) { 
+            Lot lot  = it.next();
+            if (lot.getHighestBid() == null) {
+                unsoldLots.add(lot);
+            }
+        }
+        return unsoldLots;
+    }
+    
+    /*
+     * Answer to question 5:
+     * - I think that we will recieve the internal error message, 
+     * because (lotNumber - 1), which would normally give the correct index, 
+     * will give the wrong index, and the lot numbers won't match up.
+     */
+    
+    /**
+     * Remove the lot with the given lot number.
+     * @param number The number of the lot to be removed.
+     * @return The Lot with the given number, or null if
+     * there is no such lot.
+     */
+    public Lot removeLot(int number) {
+        // Answer to Question 7 
+        Iterator<Lot> it = listOfLots.iterator();
+        while (it.hasNext()) {
+            Lot toRemove = it.next();
+            if (toRemove.getNumber() == number) {
+                it.remove();
+                System.out.println("Lot " + number + " has been removed.");
+                return toRemove;
+            }
+        }
+        System.out.println("Lot number: " + number + " does not exist.");
+        return null;
+    }
 }
 
